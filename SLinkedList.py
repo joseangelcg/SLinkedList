@@ -1,140 +1,112 @@
-import sys
+from Node import Node
 
-class Node:
-	"""docstring for Node"""
-	def __init__(self, val):
-		self.val = val
-		self.next = None
-
-	def setNext(self, node):
-		self.next = node
-
-	def setValue(self, val):
-		if (self != None):
-			self.val = val
-
-	def __repr__(self):
-		return str(self.val)
 
 class SLinkedList:
-	"""docstring fos SLinkedList"""
+    """docstring fos SLinkedList"""
 
-	def __init__(self, node=None):
-		self._head = node
-		self._size = 1 if (node != None) else 0
+    def __init__(self, node=None):
+        self._head = node
+        self._size = 1 if node is not None else 0
 
-	def __len__(self):
-		return self._size
+    def __len__(self):
+        return self._size
 
-	def addNode(self, node):
-		a = self._head
-		
-		if(a == None):
-			self._head = node
-		else:
-			while(a.next != None):
-				a= a.next
+    def addNode(self, node):
+        a = self._head
 
-			a.setNext(node)
-		
-		self._size += 1
+        if a is None:
+            self._head = node
+        else:
+            while a.next is not None:
+                a = a.next
 
-	def containsVal(self, val):
-		"""
-			Searches for a specific value in the current List
+            a.setNext(node)
 
-			Return value:
-				True if val exists in SlinkedList instance
-				False otherwise
-		"""
-		if (self._head != None):
+        self._size += 1
 
-			a = self._head
-			while(a != None):
-				if(a.val == val):
-					return True
-				a = a.next
+    def containsVal(self, val):
+        """
+                Searches for a specific value in the current List
 
-		return False
+                Return value:
+                        True if val exists in SlinkedList instance
+                        False otherwise
+        """
+        if self._head is not None:
 
-	def removeVal(self, val):
-		"""
-			Removes val in the current List
-			If val is not in the list, nothing happens
+            a = self._head
+            while a is not None:
+                if(a.val == val):
+                    return True
+                a = a.next
 
-			Return value:
-				None
-		"""
-		if(self._head != None):
+        return False
 
-			if(self.containsVal(val)):
+    def removeVal(self, val):
+        """
+                Removes val in the current List
+                If val is not in the list, nothing happens
 
-				if(self._size == 1):
-					del(self._head)
-					self._head = None
-				else:
-					a = self._head
-					b = None
+                Return value:
+                        None
+        """
+        if self._head is not None:
 
-					if(a.val == val):
-						self._head = a.next
-						del(a)
-					else:
-						while(a.val != val):
-							b = a
-							a = a.next
+            if(self.containsVal(val)):
 
-						b.setNext(a.next)
-						del(a)
+                if(self._size == 1):
+                    del(self._head)
+                    self._head = None
+                else:
+                    a = self._head
+                    b = None
 
-				self._size -= 1
+                    if(a.val == val):
+                        self._head = a.next
+                        del(a)
+                    else:
+                        while(a.val != val):
+                            b = a
+                            a = a.next
 
-	def addVal(self, val):
-		a = self._head
-		temp = Node(val)
+                        b.setNext(a.next)
+                        del(a)
 
-		if(a == None):
-			self._head = temp
-		else:
-			while(a.next != None):
-				a= a.next
+                self._size -= 1
 
-			a.setNext(temp)
-		
-		self._size += 1
+    def addVal(self, val):
+        a = self._head
+        temp = Node(val)
 
-	def get(self, index):
-		if(index < len(self)):
-			if(index):
-				a=self._head
-				for i in range(0,index):
-					a = a.next
-				return a.val
-			else:
-				return self._head.val
-		return None
+        if a is None:
+            self._head = temp
+        else:
+            while a.next is not None:
+                a = a.next
 
-	def __repr__(self):
-		a = self._head
-		str1 = str(a.val)
+            a.setNext(temp)
 
-		while(a.next != None):
-			a = a.next
-			str1 += " -> " + str(a.val)
+        self._size += 1
 
-		return str1 
+    def get(self, index):
+        if(index < len(self)):
+            if(index):
+                a = self._head
+                for i in range(0, index):
+                    a = a.next
+                return a.val
+            else:
+                return self._head.val
+        return None
 
+    def __repr__(self):
+        str1 = ""
+        if self._head is not None:
+            a = self._head
+            str1 = str(self._head)
 
-#Test code
+            while a.next is not None:
+                a = a.next
+                str1 += " -> " + str(a.val)
 
-List1 = SLinkedList()
-List1.addVal(5)
-List1.addVal(7)
-List1.addVal(8)
-print(List1)
-print(len(List1))
-
-List1.removeVal(5)
-print(List1)
-print(List1.get(2))
-
+        return str1
