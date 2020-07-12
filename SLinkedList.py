@@ -4,27 +4,25 @@ from Node import Node
 class SLinkedList:
     """docstring fos SLinkedList"""
 
-    def __init__(self, node=None):
-        self._head = node
-        self._size = 1 if node is not None else 0
+    def __init__(self):
+        self._head = None
+        self._size = 0
 
     def __len__(self):
         return self._size
 
-    def addNode(self, node):
-        a = self._head
+    def __iter__(self):
+        self._node_iter = self._head
+        return self
 
-        if a is None:
-            self._head = node
-        else:
-            while a.next is not None:
-                a = a.next
+    def __next__(self):
+        if self._node_iter is None:
+            raise StopIteration
+        to_ret = self._node_iter
+        self._node_iter = self._node_iter.next
+        return to_ret
 
-            a.setNext(node)
-
-        self._size += 1
-
-    def containsVal(self, val):
+    def containsval(self, val):
         """
                 Searches for a specific value in the current List
 
@@ -32,17 +30,12 @@ class SLinkedList:
                         True if val exists in SlinkedList instance
                         False otherwise
         """
-        if self._head is not None:
-
-            a = self._head
-            while a is not None:
-                if(a.val == val):
-                    return True
-                a = a.next
-
+        for node in self:
+            if node.val == val:
+                return True
         return False
 
-    def removeVal(self, val):
+    def removeval(self, val):
         """
                 Removes val in the current List
                 If val is not in the list, nothing happens
@@ -50,63 +43,105 @@ class SLinkedList:
                 Return value:
                         None
         """
-        if self._head is not None:
-
-            if(self.containsVal(val)):
-
-                if(self._size == 1):
-                    del(self._head)
+        if self._head is None:
+            raise RuntimeError("Object %s: Can't remove value from empty list" % self.__class__.__name__)
+        else:
+            if self.containsval(val):
+                if self._size == 1:
+                    del self._head
                     self._head = None
                 else:
-                    a = self._head
-                    b = None
-
-                    if(a.val == val):
-                        self._head = a.next
-                        del(a)
-                    else:
-                        while(a.val != val):
-                            b = a
-                            a = a.next
-
-                        b.setNext(a.next)
-                        del(a)
-
+                    prev = None
+                    for a in self:
+                        if a.val != val:
+                            prev = a
+                        else:
+                            if prev is None:
+                                self._head = a.next
+                            else:
+                                prev.setnext(a.next)
+                            del a
+                            break
                 self._size -= 1
 
-    def addVal(self, val):
-        a = self._head
-        temp = Node(val)
+    def join(self, other):
+        if not isinstance(other, SLinkedList):
+            raise TypeError("%s: Only SLinkedList can be joined together" % self.__class__.__name__)
+        else:
+            for node in self:
+                if node.next is None:
+                    node.setnext(other._head)
+                    break
 
-        if a is None:
+    def append_list(self, val_list):
+        if not isinstance(val_list, list):
+            raise TypeError("%s: Wrong data type" % self.__class__.__name__)
+        else:
+            for elem in val_list:
+                self.append(elem)
+
+    def append(self, val):
+        temp = Node(val)
+        if self._head is None:
             self._head = temp
         else:
-            while a.next is not None:
-                a = a.next
-
-            a.setNext(temp)
-
+            for node in self:
+                if node.next is None:
+                    node.setnext(temp)
+                    break
         self._size += 1
 
-    def get(self, index):
-        if(index < len(self)):
-            if(index):
-                a = self._head
-                for i in range(0, index):
-                    a = a.next
-                return a.val
-            else:
-                return self._head.val
-        return None
+    def add_atindex(self, val, index):
+        if not isinstance(index, int):
+            raise TypeError("%s: Wrong data type" % self.__class__.__name__)
+        elif index >= len(self):
+            raise IndexError("%s: Index out of bonds" % self.__class__.__name__)
+        else:
+            prev = None
+            for node in self:
+                if index > 0:
+                    prev = node
+                    index -= 1
+                else:
+                    if prev is None:
+                        new = Node(val, self._head)
+                        self._head = new
+                    else:
+                        new = Node(val, node)
+                        prev.setnext(new)
+                    break
+
+    def getindex(self, index):
+        if not isinstance(index, int):
+            raise TypeError("%s: Wrong data type" % self.__class__.__name__)
+        elif index >= len(self):
+            raise IndexError("%s: Index out of bonds" % self.__class__.__name__)
+        else:
+            for node in self:
+                if index == 0:
+                    return node.val
+                index -= 1
 
     def __repr__(self):
-        str1 = ""
-        if self._head is not None:
-            a = self._head
-            str1 = str(self._head)
+        return "< {}: list = {}, size = {} >".format(self.__class__.__name__, self.__str__(), len(self))
 
-            while a.next is not None:
-                a = a.next
-                str1 += " -> " + str(a.val)
+    def __str__(self):
+        s = []
+        for val in self:
+            s.append(str(val))
+        return "->".join(s)
 
-        return str1
+    def __add__(self, other):
+        ret_list = SLinkedList()
+        for node in self:
+            ret_list.append(node.val)
+        ret_list.join(other)
+        return ret_list
+
+    def __iadd__(self, other):
+        self.append(other)
+        return self
+
+    def __isub__(self, other):
+        self.removeval(other)
+        return self
