@@ -1,16 +1,16 @@
 class Node:
     """docstring for Node"""
 
-    def __init__(self, val):
+    def __init__(self, val, next_node=None):
         self.val = val
-        self.next = None
+        self.next = next_node
 
-    def setNext(self, node):
+    def setnext(self, node):
         self.next = node
 
-    def setValue(self, val):
+    def setvalue(self, val):
         if self is not None:
             self.val = val
 
-    def __repr__(self):
-        return str(self.val)
+    def __str__(self):
+        return "[ {} ]".format(str(self.val))
